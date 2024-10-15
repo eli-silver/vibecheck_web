@@ -1,6 +1,6 @@
 // src/components/Layout.tsx
 import React from 'react';
-import '../styles/Layout';
+import '../styles/Layout.css';
 import Logo from './Logo'
 import SerialConnect from './SerialConnect';
 import SystemStatus from './SystemStatus';
