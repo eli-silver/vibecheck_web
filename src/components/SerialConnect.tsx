@@ -1,7 +1,6 @@
 // src/components/SerialConnect.tsx
 import React, { useState } from 'react';
 import { RootState } from '../redux/store';
-import { Button } from "@nextui-org/react";
 import { useAppSelector, useAppDispatch } from '../redux/hooks'
 import { connectSerial, disconnectSerial } from '../features/serialSlice';
 import '../styles/SerialConnect.css';

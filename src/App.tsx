@@ -2,7 +2,6 @@
 
 import React, { useEffect } from 'react'
 import { Provider as ReduxProvider } from 'react-redux'
-import { NextUIProvider } from '@nextui-org/react';
 import { useAppDispatch } from './redux/hooks';
 import store from './redux/store'
 import { initializeApp } from './utils/appInitialization';
@@ -22,9 +21,7 @@ const AppContent: React.FC = () => {
 function App() {
   return (
     <ReduxProvider store={store}>
-      <NextUIProvider>
         <AppContent/>
-      </NextUIProvider>
     </ReduxProvider>
   )
 }
