@@ -1,6 +1,6 @@
 // src/components/Logo.tsx
 import React from 'react';
-import VibeCheckLogo from '../assets/VibeCheck_logo.png';
+import VibeCheckLogo from '../public/VibeCheck_logo.png';
 
 const Logo: React.FC = () => {
     return(
