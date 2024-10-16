@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -47,14 +47,7 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
   triggerLevel,
   useTrigger,
 }) => {
-  const chartRef = useRef<ChartJS>(null);
   const data = useAppSelector((state) => state.serial.data.find((d) => d.channel === channel));
-
-  useEffect(() => {
-    if (chartRef.current) {
-      // Update chart data and options here
-    }
-  }, [data, windowWidth, autoRange, yMin, yMax, triggerChannel, triggerAxis, triggerLevel, useTrigger]);
 
   const chartData: ChartData<'line'> = {
     labels: data?.dataPoints.map((_, index) => index.toString()) || [],
@@ -95,7 +88,11 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
     },
   };
 
-  return <Line data={chartData} options={options} />;
+  return (
+    <div style={{ height: '300px', marginBottom: '20px' }}>
+      <Line data={chartData} options={options} />
+    </div>
+  );
 };
 
 export default ChartComponent;

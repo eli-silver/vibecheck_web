@@ -1,30 +1,13 @@
-import React, { useState } from 'react';
-import { useAppDispatch } from '../redux/hooks';
-// Import action creators for updating plot settings (you'll need to create these)
+import React from 'react';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { updatePlotSettings } from '../features/plotSlice';
 
 const PlotControlsComponent: React.FC = () => {
   const dispatch = useAppDispatch();
-  const [windowWidth, setWindowWidth] = useState(100);
-  const [autoRange, setAutoRange] = useState(true);
-  const [yMin, setYMin] = useState(-10);
-  const [yMax, setYMax] = useState(10);
-  const [triggerChannel, setTriggerChannel] = useState(1);
-  const [triggerAxis, setTriggerAxis] = useState<'x' | 'y' | 'z'>('z');
-  const [triggerLevel, setTriggerLevel] = useState(1.5);
-  const [useTrigger, setUseTrigger] = useState(false);
+  const plotSettings = useAppSelector(state => state.plot);
 
-  const handleApplySettings = () => {
-    dispatch(updatePlotSettings({
-      windowWidth,
-      autoRange,
-      yMin,
-      yMax,
-      triggerChannel,
-      triggerAxis,
-      triggerLevel,
-      useTrigger,
-    }));
+  const handleChange = (setting: string, value: number | boolean | string) => {
+    dispatch(updatePlotSettings({ [setting]: value }));
   };
 
   return (
@@ -33,27 +16,43 @@ const PlotControlsComponent: React.FC = () => {
       <div>
         <label>
           Window Width:
-          <input type="number" value={windowWidth} onChange={(e) => setWindowWidth(Number(e.target.value))} />
+          <input 
+            type="number" 
+            value={plotSettings.windowWidth} 
+            onChange={(e) => handleChange('windowWidth', Number(e.target.value))} 
+          />
         </label>
       </div>
       <div>
         <label>
           Auto Range:
-          <input type="checkbox" checked={autoRange} onChange={(e) => setAutoRange(e.target.checked)} />
+          <input 
+            type="checkbox" 
+            checked={plotSettings.autoRange} 
+            onChange={(e) => handleChange('autoRange', e.target.checked)} 
+          />
         </label>
       </div>
-      {!autoRange && (
+      {!plotSettings.autoRange && (
         <>
           <div>
             <label>
               Y Min:
-              <input type="number" value={yMin} onChange={(e) => setYMin(Number(e.target.value))} />
+              <input 
+                type="number" 
+                value={plotSettings.yMin} 
+                onChange={(e) => handleChange('yMin', Number(e.target.value))} 
+              />
             </label>
           </div>
           <div>
             <label>
               Y Max:
-              <input type="number" value={yMax} onChange={(e) => setYMax(Number(e.target.value))} />
+              <input 
+                type="number" 
+                value={plotSettings.yMax} 
+                onChange={(e) => handleChange('yMax', Number(e.target.value))} 
+              />
             </label>
           </div>
         </>
@@ -61,21 +60,32 @@ const PlotControlsComponent: React.FC = () => {
       <div>
         <label>
           Use Trigger:
-          <input type="checkbox" checked={useTrigger} onChange={(e) => setUseTrigger(e.target.checked)} />
+          <input 
+            type="checkbox" 
+            checked={plotSettings.useTrigger} 
+            onChange={(e) => handleChange('useTrigger', e.target.checked)} 
+          />
         </label>
       </div>
-      {useTrigger && (
+      {plotSettings.useTrigger && (
         <>
           <div>
             <label>
               Trigger Channel:
-              <input type="number" value={triggerChannel} onChange={(e) => setTriggerChannel(Number(e.target.value))} />
+              <input 
+                type="number" 
+                value={plotSettings.triggerChannel} 
+                onChange={(e) => handleChange('triggerChannel', Number(e.target.value))} 
+              />
             </label>
           </div>
           <div>
             <label>
               Trigger Axis:
-              <select value={triggerAxis} onChange={(e) => setTriggerAxis(e.target.value as 'x' | 'y' | 'z')}>
+              <select 
+                value={plotSettings.triggerAxis} 
+                onChange={(e) => handleChange('triggerAxis', e.target.value as 'x' | 'y' | 'z')}
+              >
                 <option value="x">X</option>
                 <option value="y">Y</option>
                 <option value="z">Z</option>
@@ -85,12 +95,15 @@ const PlotControlsComponent: React.FC = () => {
           <div>
             <label>
               Trigger Level:
-              <input type="number" value={triggerLevel} onChange={(e) => setTriggerLevel(Number(e.target.value))} />
+              <input 
+                type="number" 
+                value={plotSettings.triggerLevel} 
+                onChange={(e) => handleChange('triggerLevel', Number(e.target.value))} 
+              />
             </label>
           </div>
         </>
       )}
-      <button onClick={handleApplySettings}>Apply Settings</button>
     </div>
   );
 };

@@ -6,13 +6,12 @@ import SerialConnect from './SerialConnect';
 import SystemStatus from './SystemStatus';
 import SettingsAccordion from './SettingsAccordion';
 import FileContainer from './FileContainer';
-import { FileStreamService } from '../services/FileStreamService';
 import ChartComponent from './ChartCompoonent';
 import PlotControlsComponent from './PlotControlsComponent';
-
+import { useAppSelector } from '../redux/hooks';
 
 const Layout: React.FC = () => {
-    const fileStreamService = FileStreamService.getInstance();
+    const plotSettings = useAppSelector(state => state.plot);
 
   return (
     <div className = "layout">
@@ -22,10 +21,22 @@ const Layout: React.FC = () => {
                 <SerialConnect/>
 
             </div>
-            <div className = "plot scrollable container">
-                <ChartComponent channel={1} windowWidth={100} autoRange={false} useTrigger={false} />
-                <ChartComponent channel={2} windowWidth={100} autoRange={false} useTrigger={false} />
-                <ChartComponent channel={3} windowWidth={100} autoRange={false} useTrigger={false} />
+            <div className="plot scrollable container" style={{ overflowY: 'auto', maxHeight: '60vh' }}>
+
+            {[1, 2, 3].map(channel => (
+            <ChartComponent
+              key={channel}
+              channel={channel}
+              windowWidth={plotSettings.windowWidth}
+              autoRange={plotSettings.autoRange}
+              yMin={plotSettings.yMin}
+              yMax={plotSettings.yMax}
+              triggerChannel={plotSettings.triggerChannel}
+              triggerAxis={plotSettings.triggerAxis}
+              triggerLevel={plotSettings.triggerLevel}
+              useTrigger={plotSettings.useTrigger}
+            />
+          ))}
             </div>
             <div className = 'plot-controls container'>
                 <PlotControlsComponent/>
