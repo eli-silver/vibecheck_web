@@ -23,9 +23,9 @@ const Layout: React.FC = () => {
 
             </div>
             <div className = "plot scrollable container">
-                <ChartComponent channel={1} windowWidth={100} autoRange={true} useTrigger={false} />
-                <ChartComponent channel={2} windowWidth={100} autoRange={true} useTrigger={false} />
-                <ChartComponent channel={3} windowWidth={100} autoRange={true} useTrigger={false} />
+                <ChartComponent channel={1} windowWidth={100} autoRange={false} useTrigger={false} />
+                <ChartComponent channel={2} windowWidth={100} autoRange={false} useTrigger={false} />
+                <ChartComponent channel={3} windowWidth={100} autoRange={false} useTrigger={false} />
             </div>
             <div className = 'plot-controls container'>
                 <PlotControlsComponent/>
