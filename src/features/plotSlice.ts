@@ -13,9 +13,9 @@ interface PlotSettings {
 
 const initialState: PlotSettings = {
   windowWidth: 100,
-  autoRange: true,
-  yMin: -10,
-  yMax: 10,
+  autoRange: false,
+  yMin: -4,
+  yMax: 4,
   triggerChannel: 1,
   triggerAxis: 'z',
   triggerLevel: 1.5,
