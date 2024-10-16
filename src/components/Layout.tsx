@@ -7,6 +7,8 @@ import SystemStatus from './SystemStatus';
 import SettingsAccordion from './SettingsAccordion';
 import FileContainer from './FileContainer';
 import { FileStreamService } from '../services/FileStreamService';
+import ChartComponent from './ChartCompoonent';
+import PlotControlsComponent from './PlotControlsComponent';
 
 
 const Layout: React.FC = () => {
@@ -21,12 +23,12 @@ const Layout: React.FC = () => {
 
             </div>
             <div className = "plot scrollable container">
-                <h1>scrollable plot container</h1>
-
+                <ChartComponent channel={1} windowWidth={100} autoRange={true} useTrigger={false} />
+                <ChartComponent channel={2} windowWidth={100} autoRange={true} useTrigger={false} />
+                <ChartComponent channel={3} windowWidth={100} autoRange={true} useTrigger={false} />
             </div>
             <div className = 'plot-controls container'>
-                <h1>Plot Controls</h1>
-
+                <PlotControlsComponent/>
             </div>
         </div>
         <div className = "status-settings-files container">

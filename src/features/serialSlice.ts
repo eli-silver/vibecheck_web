@@ -4,6 +4,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { ChannelData } from '../utils/dataParser';
 import { SerialService } from '../services/SerialService';
 import { setStatusMessage, appendStatusMessage } from './systemStatusSlice';
+import { DataProcessingService } from '../services/DataProcessingService';
 
 export interface SerialState {
   isConnected: boolean;
@@ -73,6 +74,9 @@ export const disconnectSerial = createAsyncThunk(
   }
 );
 
+
+const dataProcessingService = DataProcessingService.getInstance();
+
 const serialSlice = createSlice({
   name: 'serial',
   initialState,
@@ -101,6 +105,8 @@ const serialSlice = createSlice({
           state.data.push(newChannelData);
         }
       });
+      // Update the data processing service
+      dataProcessingService.updateData(state.data);
     },
   },
   extraReducers: (builder) => {

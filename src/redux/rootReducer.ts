@@ -5,6 +5,7 @@ import systemStatusReducer, {SystemStatusState} from '../features/systemStatusSl
 import { serialOutputReducer, SerialOutputState } from '../features/serialOutputSlice';
 import sensorReducer, {SensorStateMap} from '../features/sensorSlice';
 import fileReducer, {FileState} from '../features/fileSlice'
+import plotReducer from '../features/plotSlice'
 
 
 
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
   serialOutput: serialOutputReducer,
   sensor: sensorReducer,
   file: fileReducer,
+  plot: plotReducer,
   // ... other reducers
 });
 
