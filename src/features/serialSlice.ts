@@ -5,7 +5,7 @@ import { ChannelData } from '../utils/dataParser';
 import { SerialService } from '../services/SerialService';
 import { setStatusMessage, appendStatusMessage } from './systemStatusSlice';
 
-interface SerialState {
+export interface SerialState {
   isConnected: boolean;
   error: string | null;
   isBrowserCompatible: boolean;

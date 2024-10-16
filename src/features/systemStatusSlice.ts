@@ -1,7 +1,7 @@
 // src/features/systemStatus/systemStatusSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface SystemStatusState {
+export interface SystemStatusState {
   message: string;
 }
 

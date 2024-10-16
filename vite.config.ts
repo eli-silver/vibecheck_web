@@ -1,12 +1,12 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import path from 'path'
+import path from 'node:path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   optimizeDeps: {
-    include: ['@nextui-org/react'],
+    include: ['@nextui-org/react','clsx', 'tailwind-merge'],
   },
   base: '/vibecheck_web/',
   resolve: {

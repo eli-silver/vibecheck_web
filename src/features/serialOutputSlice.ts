@@ -2,7 +2,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { SerialService } from '../services/SerialService';
 
-interface SerialOutputState {
+export interface SerialOutputState {
   lastSentMessage: string | null;
   error: string | null;
 }

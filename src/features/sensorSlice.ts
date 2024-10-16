@@ -6,7 +6,7 @@ export interface SensorState {
   sampleRate: string;
 }
 
-interface SensorStateMap {
+export interface SensorStateMap {
   [key: number]: SensorState;
 }
 

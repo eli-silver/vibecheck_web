@@ -1,5 +1,7 @@
 // src/types/index.ts
 
+import type { ClassValue } from 'clsx';
+
 export {};
 
 declare global {
@@ -88,4 +90,6 @@ declare global {
   interface Navigator {
     serial: Serial;
   }
+
+  type CLassName = ClassValue;
 }

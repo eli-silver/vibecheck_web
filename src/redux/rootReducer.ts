@@ -1,10 +1,11 @@
 // src/redux/rootReducer.ts
 import { combineReducers } from '@reduxjs/toolkit';
-import serialReducer from '../features/serialSlice';
-import systemStatusReducer from '../features/systemStatusSlice'
-import { serialOutputReducer } from '../features/serialOutputSlice';
-import sensorReducer from '../features/sensorSlice';
-import fileReducer from '../features/fileSlice'
+import serialReducer, {SerialState} from '../features/serialSlice';
+import systemStatusReducer, {SystemStatusState} from '../features/systemStatusSlice'
+import { serialOutputReducer, SerialOutputState } from '../features/serialOutputSlice';
+import sensorReducer, {SensorStateMap} from '../features/sensorSlice';
+import fileReducer, {FileState} from '../features/fileSlice'
+
 
 
 const rootReducer = combineReducers({
@@ -16,6 +17,12 @@ const rootReducer = combineReducers({
   // ... other reducers
 });
 
-export type RootState = ReturnType<typeof rootReducer>;
+export interface RootState {
+  serial: SerialState;
+  systemStatus: SystemStatusState;
+  serialOutput: SerialOutputState;
+  sensor: SensorStateMap;
+  file: FileState;
+}
 
 export default rootReducer;
