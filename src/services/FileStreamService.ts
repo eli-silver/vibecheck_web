@@ -4,6 +4,7 @@ export class FileStreamService {
     private fileHandle: FileSystemFileHandle | null = null;
     private writer: FileSystemWritableFileStream | null = null;
     private isRecording: boolean = false;
+    private isClosing: boolean = false;
   
     private constructor() {}
   
@@ -27,21 +28,29 @@ export class FileStreamService {
       this.writer = await this.fileHandle.createWritable();
       this.isRecording = true;
       this.writeToFile('Channel,Timestamp,X,Y,Z\n'); // set first line of file as descriptive header
+      this.isClosing = false; 
     }
   
     async stopRecording() {
-      if (this.writer) {
-        await this.writer.close();
-        this.writer = null;
+      if (this.writer && !this.isClosing) {
+        this.isClosing = true;
+        try{
+          await this.writer.close();
+
+        }catch (error){
+          console.error('Error closing file:', error);
+        }finally{
+          this.writer = null;
+          this.isClosing = false;
+        }
       }
       this.isRecording = false;
     }
   
     async writeToFile(data: string) {
-      if (!this.isRecording || !this.writer) {
+      if (!this.isRecording || !this.writer || this.isClosing) {
         return; // Don't write if not recording
       }
-  
       await this.writer.write(data);
     }
   

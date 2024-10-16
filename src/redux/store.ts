@@ -20,6 +20,10 @@ const store = configureStore({
         extraArgument: { serialService, fileStreamService },
       },
     }).concat(serialDataMiddleware, serialOutputMiddleware),
+    devTools: {
+      trace: true, // Enable trace feature
+      traceLimit: 25, // Limit number of stack frames (optional)
+    },
 });
 
 // Set the dispatch function on the SerialService after store creation

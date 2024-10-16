@@ -4,6 +4,7 @@ import { Button } from "@nextui-org/react";
 import { FileStreamService } from '../services/FileStreamService';
 import { RootState } from '../redux/store';
 import { setSaveLocation, setRecording } from '../features/fileSlice';
+import { setStatusMessage } from '../features/systemStatusSlice';
 
 const FileContainer: React.FC = () => {
   const dispatch = useDispatch();
@@ -16,17 +17,36 @@ const FileContainer: React.FC = () => {
       const directory = await window.showDirectoryPicker();
       dispatch(setSaveLocation(directory.name));
       fileStreamService.setOutputDirectory(directory);
+      setStatusMessage('Save folder selected');
     } catch (error) {
       console.error('Error selecting directory:', error);
+      setStatusMessage('Failed to select file save location')
     }
   };
 
   const handleToggleRecording = async () => {
+    console.log('toggle record')
     if (isRecording) {
+      console.log('Stop Recording')
+      dispatch(setStatusMessage('Recording stopped'));
       await fileStreamService.stopRecording();
       dispatch(setRecording(false));
     } else {
-      const timestamp = new Date().toISOString().replace(/[-:]/g, '-').slice(0, -5);
+      console.log('Start Recording')
+      const now = new Date().toLocaleString('en-US', {
+        timeZone: 'America/New_York',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      });
+      const [date, time] = now.split(', ');
+      const [month, day, year] = date.split('/');
+      const timestamp = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}_${time.replace(/:/g, '-')}`;
+      dispatch(setStatusMessage(`Recording Started at ${timestamp}`));
       const filename = `data_${timestamp}.csv`;
       await fileStreamService.startRecording(filename);
       dispatch(setRecording(true));

@@ -6,7 +6,7 @@ import SerialConnect from './SerialConnect';
 import SystemStatus from './SystemStatus';
 import SettingsAccordion from './SettingsAccordion';
 import FileContainer from './FileContainer';
-import ChartComponent from './ChartCompoonent';
+import ChartComponent from './ChartComponent';
 import PlotControlsComponent from './PlotControlsComponent';
 import { useAppSelector } from '../redux/hooks';
 
@@ -21,22 +21,8 @@ const Layout: React.FC = () => {
                 <SerialConnect/>
 
             </div>
-            <div className="plot scrollable container" style={{ overflowY: 'auto', maxHeight: '60vh' }}>
-
-            {[1, 2, 3].map(channel => (
-            <ChartComponent
-              key={channel}
-              channel={channel}
-              windowWidth={plotSettings.windowWidth}
-              autoRange={plotSettings.autoRange}
-              yMin={plotSettings.yMin}
-              yMax={plotSettings.yMax}
-              triggerChannel={plotSettings.triggerChannel}
-              triggerAxis={plotSettings.triggerAxis}
-              triggerLevel={plotSettings.triggerLevel}
-              useTrigger={plotSettings.useTrigger}
-            />
-          ))}
+            <div className="plot scrollable container">
+              <ChartComponent/>
             </div>
             <div className = 'plot-controls container'>
                 <PlotControlsComponent/>
