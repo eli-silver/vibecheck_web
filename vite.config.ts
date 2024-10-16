@@ -17,5 +17,10 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
+    emptyOutDir: true,
   },
+  // Added to ensure TypeScript types are properly handled
+  esbuild: {
+    logOverride: { 'this-is-undefined-in-esm': 'silent' }
+  }
 })

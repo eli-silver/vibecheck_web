@@ -62,7 +62,12 @@ export const disconnectSerial = createAsyncThunk(
       dispatch(setStatusMessage('Serial port disconnected'))
       return true;
     } catch (error) {
-      dispatch(appendStatusMessage(`Error disconnecting from serial port: ${error.message}`));
+      // Type guard to check if error is an Error object
+      if (error instanceof Error) {
+        dispatch(appendStatusMessage(`Error disconnecting from serial port: ${error.message}`));
+      } else {
+        dispatch(appendStatusMessage(`Error disconnecting from serial port: Unknown error`));
+      }
       throw error;
     }
   }

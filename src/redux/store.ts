@@ -1,6 +1,6 @@
 // src/redux/store.ts
 
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import rootReducer from './rootReducer';
 import { SerialService } from '../services/SerialService';
 import serialOutputMiddleware from '../middleware/serialOutputMiddleware';
@@ -27,5 +27,12 @@ serialService.setDispatch(store.dispatch);
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  RootState,
+  unknown,
+  Action<string>
+>;
 
 export default store;

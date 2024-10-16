@@ -1,23 +1,22 @@
-import { Middleware, MiddlewareAPI, Dispatch, AnyAction } from '@reduxjs/toolkit';
+import { Middleware } from '@reduxjs/toolkit';
 import { parseSerialData, Message, ChannelData, convertToCSV } from '../utils/dataParser';
 import { setStatusMessage } from '../features/systemStatusSlice';
 import { receiveData } from '../features/serialSlice';
 import { FileStreamService } from '../services/FileStreamService';
+import { RootState } from '../redux/rootReducer';
 
 type SerialDataReceivedAction = {
   type: 'SERIAL_DATA_RECEIVED';
   payload: string;
 };
 
-function isSerialDataReceivedAction(action: AnyAction): action is SerialDataReceivedAction {
+function isSerialDataReceivedAction(action: any): action is SerialDataReceivedAction {
   return action.type === 'SERIAL_DATA_RECEIVED' && typeof action.payload === 'string';
 }
 
-const createSerialDataMiddleware = (fileStreamService: FileStreamService): Middleware => 
-  (store: MiddlewareAPI) => 
-  (next: Dispatch) => 
-  (action: AnyAction) => {
-    if (action.type === 'SERIAL_DATA_RECEIVED') {
+const createSerialDataMiddleware = (fileStreamService: FileStreamService): Middleware<{}, RootState> => {
+  const middleware: Middleware<{}, RootState> = (store) => (next) => (action) => {
+    if (isSerialDataReceivedAction(action)) {
       const serialData: string = action.payload;
       const parsedMessage: Message = parseSerialData(serialData);
 
@@ -26,8 +25,6 @@ const createSerialDataMiddleware = (fileStreamService: FileStreamService): Middl
           if (Array.isArray(parsedMessage.data)) {
             const channelData = parsedMessage.data as ChannelData[];
             store.dispatch(receiveData(channelData));
-            
-            const fileStreamService = FileStreamService.getInstance();
             
             if (fileStreamService.getIsRecording()) {
               const csvData = convertToCSV(channelData);
@@ -38,11 +35,10 @@ const createSerialDataMiddleware = (fileStreamService: FileStreamService): Middl
             }
           }
           break;
-          break;
         case 'event':
           console.log('Event message:', parsedMessage.data);
           if (typeof parsedMessage.data === 'string') {
-            store.dispatch( setStatusMessage(`Event: ${parsedMessage.data}`));
+            store.dispatch(setStatusMessage(`Event: ${parsedMessage.data}`));
           }
           break;
         case 'ack':
@@ -60,5 +56,8 @@ const createSerialDataMiddleware = (fileStreamService: FileStreamService): Middl
 
     return next(action);
   };
+
+  return middleware;
+};
 
 export default createSerialDataMiddleware;
