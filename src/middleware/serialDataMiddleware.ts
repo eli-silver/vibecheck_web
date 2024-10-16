@@ -1,57 +1,64 @@
-// src/middleware/serialDataMiddleware.ts
-
-import { Middleware, MiddlewareAPI, Dispatch, UnknownAction } from 'redux';
-import { parseSerialData, Message, DataPoint } from '../utils/dataParser';
-import { appendStatusMessage } from '../features/systemStatusSlice';
+import { Middleware, MiddlewareAPI, Dispatch, AnyAction } from '@reduxjs/toolkit';
+import { parseSerialData, Message, ChannelData, convertToCSV } from '../utils/dataParser';
+import { setStatusMessage } from '../features/systemStatusSlice';
 import { receiveData } from '../features/serialSlice';
+import { FileStreamService } from '../services/FileStreamService';
 
 type SerialDataReceivedAction = {
   type: 'SERIAL_DATA_RECEIVED';
   payload: string;
 };
 
-function isSerialDataReceivedAction(action: UnknownAction): action is SerialDataReceivedAction {
-  return action.type === 'SERIAL_DATA_RECEIVED' && typeof (action as any).payload === 'string';
+function isSerialDataReceivedAction(action: AnyAction): action is SerialDataReceivedAction {
+  return action.type === 'SERIAL_DATA_RECEIVED' && typeof action.payload === 'string';
 }
 
-const serialDataMiddleware: Middleware = 
+const createSerialDataMiddleware = (fileStreamService: FileStreamService): Middleware => 
   (store: MiddlewareAPI) => 
   (next: Dispatch) => 
-  (action: UnknownAction) => {
-    if (isSerialDataReceivedAction(action)) {
+  (action: AnyAction) => {
+    if (action.type === 'SERIAL_DATA_RECEIVED') {
       const serialData: string = action.payload;
-      const parsedMessages: Message[] = parseSerialData(serialData);
+      const parsedMessage: Message = parseSerialData(serialData);
 
-      parsedMessages.forEach(message => {
-        switch (message.type) {
-          case 'data':
-            console.log('Received data points:', message.data);
-            if (Array.isArray(message.data)) {
-              // Assuming receiveData can handle an array of DataPoints
-              store.dispatch(receiveData(message.data as DataPoint[]));
+      switch (parsedMessage.type) {
+        case 'data':
+          if (Array.isArray(parsedMessage.data)) {
+            const channelData = parsedMessage.data as ChannelData[];
+            store.dispatch(receiveData(channelData));
+            
+            const fileStreamService = FileStreamService.getInstance();
+            
+            if (fileStreamService.getIsRecording()) {
+              const csvData = convertToCSV(channelData);
+              fileStreamService.writeToFile(csvData).catch(error => {
+                console.error('Error writing to file:', error);
+                store.dispatch(setStatusMessage(`Error writing to file: ${error.message}`));
+              });
             }
-            break;
-          case 'event':
-            console.log('Event message:', message.data);
-            if (typeof message.data === 'string') {
-              store.dispatch(appendStatusMessage(`Event: ${message.data}`));
-            }
-            break;
-          case 'ack':
-            console.log('Acknowledgement:', message.data);
-            // Handle acknowledgements if needed
-            break;
-          case 'error':
-            console.log('Error message:', message.data);
-            if (typeof message.data === 'string') {
-              store.dispatch(appendStatusMessage(`Error: ${message.data}`));
-            }
-            break;
-        }
-      });
+          }
+          break;
+          break;
+        case 'event':
+          console.log('Event message:', parsedMessage.data);
+          if (typeof parsedMessage.data === 'string') {
+            store.dispatch( setStatusMessage(`Event: ${parsedMessage.data}`));
+          }
+          break;
+        case 'ack':
+          console.log('Acknowledgement:', parsedMessage.data);
+          // Handle acknowledgements if needed
+          break;
+        case 'error':
+          console.error('Error message:', parsedMessage.data);
+          if (typeof parsedMessage.data === 'string') {
+            store.dispatch(setStatusMessage(`Error: ${parsedMessage.data}`));
+          }
+          break;
+      }
     }
 
     return next(action);
   };
 
-export default serialDataMiddleware;
+export default createSerialDataMiddleware;

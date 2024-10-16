@@ -1,7 +1,7 @@
 // src/features/serial/serialSlice.ts
 
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { DataPoint } from '../utils/dataParser';
+import { ChannelData } from '../utils/dataParser';
 import { SerialService } from '../services/SerialService';
 import { setStatusMessage, appendStatusMessage } from './systemStatusSlice';
 
@@ -9,7 +9,7 @@ interface SerialState {
   isConnected: boolean;
   error: string | null;
   isBrowserCompatible: boolean;
-  data: DataPoint[];
+  data: ChannelData[];
 }
 
 const initialState: SerialState = {
@@ -86,8 +86,16 @@ const serialSlice = createSlice({
     setBrowserCompatibility: (state, action: PayloadAction<boolean>) => {
       state.isBrowserCompatible = action.payload;
     },
-    receiveData: (state, action: PayloadAction<DataPoint[]>) => {
-      state.data = [...state.data, ...action.payload];
+    receiveData: (state, action: PayloadAction<ChannelData[]>) => {
+      // Merge new data with existing data
+      action.payload.forEach(newChannelData => {
+        const existingChannelIndex = state.data.findIndex(channel => channel.channel === newChannelData.channel);
+        if (existingChannelIndex !== -1) {
+          state.data[existingChannelIndex].dataPoints.push(...newChannelData.dataPoints);
+        } else {
+          state.data.push(newChannelData);
+        }
+      });
     },
   },
   extraReducers: (builder) => {

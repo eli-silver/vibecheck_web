@@ -2,18 +2,22 @@
 
 import { configureStore } from '@reduxjs/toolkit';
 import rootReducer from './rootReducer';
-import serialDataMiddleware from '../middleware/serialDataMiddleware';
 import { SerialService } from '../services/SerialService';
 import serialOutputMiddleware from '../middleware/serialOutputMiddleware';
+import { FileStreamService } from '../services/FileStreamService';
+import createSerialDataMiddleware from '../middleware/serialDataMiddleware';
 
 const serialService = new SerialService();
+const fileStreamService = FileStreamService.getInstance();
+
+const serialDataMiddleware = createSerialDataMiddleware(fileStreamService);
 
 const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       thunk: {
-        extraArgument: { serialService },
+        extraArgument: { serialService, fileStreamService },
       },
     }).concat(serialDataMiddleware, serialOutputMiddleware),
 });

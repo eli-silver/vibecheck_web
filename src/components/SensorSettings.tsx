@@ -1,19 +1,126 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Switch, Select, SelectItem } from "@nextui-org/react";
+import { useAppSelector, useAppDispatch } from '../redux/hooks';
+import { useSensorSerial } from '../hooks/useSensorSerial';
+import {
+  toggleSensor,
+  setAccelerationRange,
+  setSampleRate,
+  SensorState
+} from '../features/sensorSlice';
+import { RootState } from '../redux/rootReducer';
 
-const SensorSettings: React.FC = () => {
-  const [value, setValue] = useState('');
+interface SensorSettingsProps {
+  accelNumber: number;
+}
+
+const SensorSettings: React.FC<SensorSettingsProps> = ({ accelNumber }) => {
+  const dispatch = useAppDispatch();
+  const sensorState = useAppSelector((state: RootState) => 
+    state.sensor ? state.sensor[accelNumber] : undefined
+  );
+
+  const isEnabled = sensorState?.isEnabled ?? false;
+  const accelerationRange = sensorState?.accelerationRange ?? '';
+  const sampleRate = sensorState?.sampleRate ?? '';
+
+  // Use the custom hook for accel state change
+  useSensorSerial(accelNumber);
+
+  // Acceleration range in g: 2,4,8,16
+  const accelRanges = [
+    { label: "±2 g", value: "2" },
+    { label: "±4 g", value: "4" },
+    { label: "±8 g", value: "8" },
+    { label: "±16 g", value: "16" },
+  ];
+
+  // Sample rates in Hz: 13, 26, 52, 104, 208, 416, 833, 1660, 3330, 6660
+  const sampleRates = [
+    { label: "13 Hz", value: "13" },
+    { label: "26 Hz", value: "26" },
+    { label: "52 Hz", value: "52" },
+    { label: "104 Hz", value: "104" },
+    { label: "208 Hz", value: "208" },
+    { label: "416 Hz", value: "416" },
+    { label: "833 Hz", value: "833" },
+    { label: "1660 Hz", value: "1660" },
+    { label: "3330 Hz", value: "3330" },
+    { label: "6660 Hz", value: "6660" },
+  ];
+
+  if (!sensorState) {
+    return <div>Loading...</div>;
+  }
+
+  const handleAccelerationRangeChange = (value: string) => {
+    dispatch(setAccelerationRange({ accelNumber, range: value }));
+  };
+
+  const handleSampleRateChange = (value: string) => {
+    dispatch(setSampleRate({ accelNumber, rate: value }));
+  };
+
+  const selectClasses = {
+    trigger: "bg-gray-700 text-gray-300",
+    value: "text-gray-300",
+    popover: "bg-gray-700",
+    listbox: "bg-gray-700",
+  };
 
   return (
-    <div>
-      <h3 className="text-lg font-semibold mb-2">Setting 1</h3>
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        className="w-full px-3 py-2 border rounded-md"
-        placeholder="Enter a value"
-      />
-      <p className="mt-2">Current value: {value}</p>
+    <div className="p-4 bg-gray-800 text-gray-300">
+      <h3 className="text-lg font-semibold mb-2">Accelerometer {accelNumber + 1}</h3>
+      <div className="mb-4 flex items-center">
+        <Switch 
+          checked={isEnabled}
+          onChange={() => dispatch(toggleSensor(accelNumber))}
+        />
+        <span className="ml-2">
+          {isEnabled ? 'Enabled' : 'Disabled'}
+        </span>
+      </div>
+
+      <div className="mb-4">
+        <Select
+          label="Acceleration Range"
+          placeholder="Select a range"
+          selectedKeys={accelerationRange ? [accelerationRange] : []}
+          onSelectionChange={(keys) => handleAccelerationRangeChange(Array.from(keys)[0] as string)}
+          isDisabled={!isEnabled}
+          classNames={selectClasses}
+        >
+          {accelRanges.map((range) => (
+            <SelectItem key={range.value} value={range.value}>
+              {range.label}
+            </SelectItem>
+          ))}
+        </Select>
+      </div>
+
+      <div className="mb-4">
+        <Select
+          label="Sample Rate"
+          placeholder="Select a sample rate"
+          selectedKeys={sampleRate ? [sampleRate] : []}
+          onSelectionChange={(keys) => handleSampleRateChange(Array.from(keys)[0] as string)}
+          isDisabled={!isEnabled}
+          classNames={selectClasses}
+        >
+          {sampleRates.map((rate) => (
+            <SelectItem key={rate.value} value={rate.value}>
+              {rate.label}
+            </SelectItem>
+          ))}
+        </Select>
+      </div>
+
+      {isEnabled && accelerationRange && sampleRate && (
+        <p className="text-sm">
+          Current settings: Enabled, Range: {accelRanges.find(r => r.value === accelerationRange)?.label}, 
+          Sample Rate: {sampleRates.find(r => r.value === sampleRate)?.label}
+        </p>
+      )}
     </div>
   );
 };

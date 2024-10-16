@@ -20,7 +20,6 @@ const SerialConnect: React.FC = () => {
 
     const getButtonText = () => {
         if (!isBrowserCompatible) return "Browser not compatible";
-        console.log('browser compatible true');
         return isConnected ? 'Disconnect' : 'Connect to VibeCheck';
     };
 

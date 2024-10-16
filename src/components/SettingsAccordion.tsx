@@ -1,37 +1,41 @@
 import React from 'react';
-import CustomAccordion from './CustomAccordion';
+import { Accordion, AccordionItem } from "@nextui-org/react";
 import SensorSettings from './SensorSettings';
 import SerialInput from './SerialInput';
 
 const SettingsAccordion: React.FC = () => {
-  const items = [
-    { title: "Setting 1", content: <SensorSettings /> },
-    { title: "Setting 2", content: <SerialInput /> },
-    { 
-      title: "Setting 3", 
-      content: (
-        <div>
-          <h3 className="text-lg font-semibold mb-2">Setting 3</h3>
-          <p>This is a simple text content for Setting 3.</p>
-        </div>
-      ) 
-    },
-    { 
-      title: "Setting 4", 
-      content: (
-        <div>
-          <h3 className="text-lg font-semibold mb-2">Setting 4</h3>
-          <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-            Click me!
-          </button>
-        </div>
-      ) 
-    },
-  ];
-
   return (
-    <div className="max-h-full overflow-auto w-full p-4">
-      <CustomAccordion items={items} allowMultiple={true} />
+    <div className="max-h-full overflow-auto w-full p-4 padding-10">
+      <Accordion 
+        selectionMode="multiple"
+        >
+        <AccordionItem key="accel1" aria-label="Accel 1" 
+        title={ <h3 className='text-white'>Accel 1</h3>} 
+        >
+          <SensorSettings accelNumber={0} />
+        </AccordionItem>
+        <AccordionItem key="accel2" aria-label="Accel 2" 
+          title={<h3 className='text-white'>Accel 2</h3>}>
+          <SensorSettings accelNumber={1} />
+        </AccordionItem>
+        <AccordionItem key="accel3" aria-label="Accel 3" 
+          title={<h3 className='text-white'>Accel 3</h3>}>
+          <SensorSettings accelNumber={2} />
+        </AccordionItem>
+        <AccordionItem key="wavegen" aria-label="Wavegen" title={<h3 className='text-white'>Wavegen</h3>}>
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Wavegen</h3>
+          </div>
+        </AccordionItem>
+        <AccordionItem key="lighting" aria-label="Lighting" title={<h3 className='text-white'>Lights</h3>}>
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Lights</h3>
+          </div>
+        </AccordionItem>
+        <AccordionItem key="serial" aria-label="Serial" title={<h3 className='text-white'>Serial</h3>}>
+          <SerialInput />
+        </AccordionItem>
+      </Accordion>
     </div>
   );
 };

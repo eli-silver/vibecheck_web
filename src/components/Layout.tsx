@@ -5,8 +5,13 @@ import Logo from './Logo'
 import SerialConnect from './SerialConnect';
 import SystemStatus from './SystemStatus';
 import SettingsAccordion from './SettingsAccordion';
+import FileContainer from './FileContainer';
+import { FileStreamService } from '../services/FileStreamService';
+
 
 const Layout: React.FC = () => {
+    const fileStreamService = FileStreamService.getInstance();
+
   return (
     <div className = "layout">
         <div className = "logo-serial-plot-controls container">
@@ -32,6 +37,8 @@ const Layout: React.FC = () => {
             <SettingsAccordion />
             </div>
             <div className = "file container">
+            
+                <FileContainer />
 
             </div>
         </div>
