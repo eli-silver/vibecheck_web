@@ -27,11 +27,20 @@ ChartJS.register(
   Legend
 );
 
-const ChartComponent: React.FC = () => {
-  const plotSettings = useAppSelector(state => state.plot);
-  const data = useAppSelector((state) => state.serial.data.find((d) => d.channel === 0));
-  const chartRef = useRef<ChartJS<"line", number[], string> | null>(null);
+interface ChartComponentProps {
+  channel: number;
+  title: string;
+}
 
+
+const ChartComponent: React.FC<ChartComponentProps> = ({ channel, title }) => {
+  const plotSettings = useAppSelector(state => state.plot);
+  const data = useAppSelector((state) => state.serial.data.find((d) => d.channel === channel));
+  const enabledSensorsCount = useAppSelector(state => 
+    Object.values(state.sensor).filter(s => s.isEnabled).length
+  );
+
+  const chartRef = useRef<ChartJS<"line", number[], string> | null>(null);
 
   const chartData: ChartData<'line'> = useMemo(() => {
     const dataPoints = data?.dataPoints || [];
@@ -62,6 +71,7 @@ const ChartComponent: React.FC = () => {
       ],
     };
   }, [data, plotSettings.windowWidth]);
+
   const options: ChartOptions<'line'> = {
     responsive: true,
     maintainAspectRatio: false,
@@ -72,6 +82,12 @@ const ChartComponent: React.FC = () => {
         min: plotSettings.autoRange ? undefined : plotSettings.yMin,
         max: plotSettings.autoRange ? undefined : plotSettings.yMax,
       },
+    },
+    plugins:{
+      title:{
+        display:true,
+        text: title,
+      }
     },
     animation: {
       duration: 0,
@@ -95,7 +111,7 @@ const ChartComponent: React.FC = () => {
   }, [chartRef]);
 
   return (
-    <div className="chart-container">
+     <div className="chart-div" style={{ height: `${100 / enabledSensorsCount}%` }}>
       <Line ref={chartRef} data={chartData} options={options} />
     </div>
   );

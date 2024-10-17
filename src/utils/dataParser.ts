@@ -24,10 +24,10 @@ export function parseSerialData(data: string): Message {
       type: 'data',
       data: parseDataMessage(trimmedData)
     };
-  } else if (trimmedData.startsWith('msg')) {
+  } else if (trimmedData.startsWith('event')) {
     return {
       type: 'event',
-      data: trimmedData.substring(4).trim()
+      data: trimmedData.substring(6).trim()
     };
   } else if (trimmedData.startsWith('ack')) {
     return {

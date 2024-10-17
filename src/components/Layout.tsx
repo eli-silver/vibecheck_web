@@ -6,7 +6,7 @@ import SerialConnect from './SerialConnect';
 import SystemStatus from './SystemStatus';
 import SettingsAccordion from './SettingsAccordion';
 import FileContainer from './FileContainer';
-import ChartComponent from './ChartComponent';
+import ChartContainer from './ChartContainer';
 import PlotControlsComponent from './PlotControlsComponent';
 import { useAppSelector } from '../redux/hooks';
 
@@ -22,7 +22,7 @@ const Layout: React.FC = () => {
 
             </div>
             <div className="plot scrollable container">
-              <ChartComponent/>
+              <ChartContainer/>
             </div>
             <div className = 'plot-controls container'>
                 <PlotControlsComponent/>
