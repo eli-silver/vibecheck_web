@@ -35,8 +35,8 @@
     height: 10%;
   }
   .vibecheck-logo { 
-    width: 100%; 
-    height:auto; 
+    width: auto; 
+    height:100%; 
     max-width: 200px;
     }
     .serial-connect-button{

@@ -3,6 +3,7 @@
 import React from 'react';
 import { useAppSelector } from '../redux/hooks';
 import ChartComponent from './ChartComponent';
+import InfoComponent from './InfoComponent';
 import '../styles/ChartContainer.css';
 
 const ChartContainer: React.FC = () => {
@@ -13,23 +14,33 @@ const ChartContainer: React.FC = () => {
     .filter(([_, sensorState]) => sensorState.isEnabled)
     .map(([key]) => parseInt(key));
 
-  return (
-    <div className="chart-container">
-      {enabledSensors.map((channel) => (
-        <ChartComponent 
-          key={channel} 
-          channel={channel*2} 
-          title={`Sensor ${channel}`} 
-          autoRange = {true} 
-          windowWidth = {100}
-          yMin = {-4}
-          yMax = {4}
-          useTrigger = {false}
-          updateInterval={10}
-        />
-      ))}
-    </div>
-  );
-};
+  if(enabledSensors.length == 0){
+    return(
+      <div>
+        <InfoComponent/>
+      </div>
+    );
+  }
+  else{
+      return (
+        <div className="chart-container">
+          {enabledSensors.map((channel) => (
+            <ChartComponent 
+              key={channel} 
+              channel={channel*2} 
+              title={`Sensor ${channel}`} 
+              autoRange = {true} 
+              windowWidth = {100}
+              yMin = {-4}
+              yMax = {4}
+              useTrigger = {false}
+              updateInterval={10}
+            />
+          ))}
+        </div>
+      );
+    };
+  }
+  
 
 export default ChartContainer;
