@@ -1,6 +1,6 @@
 // src/components/ChartComponent.tsx
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useMemo,useState, useRef, useEffect } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -14,8 +14,8 @@ import {
   ChartData
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-//import { useAppSelector } from '../redux/hooks';
- import { useSelector } from 'react-redux';
+import { useAppSelector } from '../redux/hooks';
+// import { useSelector } from 'react-redux';
 
 import '../styles/Chart.css'
 import { RootState } from '../redux/store';
@@ -33,29 +33,12 @@ ChartJS.register(
 interface ChartComponentProps {
   channel: number;
   title: string;
-  windowWidth: number;
-  autoRange: boolean;
-  yMin?: number;
-  yMax?: number;
-  triggerChannel?: number;
-  triggerAxis?: 'x' | 'y' | 'z' ;
-  triggerLevel?: number;
-  useTrigger: boolean;
   updateInterval: number;
 }
-
 
 const ChartComponent: React.FC<ChartComponentProps> = ({  
   channel,
   title,
-  windowWidth,
-  autoRange,
-  yMin,
-  yMax,
-  triggerChannel,
-  triggerAxis,
-  triggerLevel,
-  useTrigger,
   updateInterval
 
 }) => {
@@ -65,8 +48,11 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
     datasets: []
   });
 
-  const allData = useSelector((state: RootState) => state.data.data);
+  const allData = useAppSelector((state: RootState) => state.data.data);
+  const plotSettings = useAppSelector(state => state.plot);
+  const enabledSensorsCount = useAppSelector(state=> Object.values(state.sensor).filter(s=>s.isEnabled).length);
   const chartRef = useRef<ChartJS<"line"> | null>(null);
+  const lineTension = 0.2;
 
 
   useEffect(() => {
@@ -74,28 +60,28 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
       const data = allData.find((d) => d.channel === channel);
       if (data) {
         const newChartData: ChartData<'line'> = {
-          labels: data.dataPoints.slice(-windowWidth).map((_, index) => index.toString()),
+          labels: data.dataPoints.slice(-plotSettings.windowWidth).map((_, index) => index.toString()),
           datasets: [
             {
               label: 'X Axis',
-              data: data.dataPoints.slice(-windowWidth).map((point) => point.x),
+              data: data.dataPoints.slice(-plotSettings.windowWidth).map((point) => point.x),
               borderColor: 'rgb(255, 99, 132)',
               backgroundColor: 'rgba(255, 99, 132, 0.5)',
-              tension: 0,
+              tension: lineTension,
             },
             {
               label: 'Y Axis',
-              data: data.dataPoints.slice(-windowWidth).map((point) => point.y),
+              data: data.dataPoints.slice(-plotSettings.windowWidth).map((point) => point.y),
               borderColor: 'rgb(53, 162, 235)',
               backgroundColor: 'rgba(53, 162, 235, 0.5)',
-              tension: 0,
+              tension: lineTension,
             },
             {
               label: 'Z Axis',
-              data: data.dataPoints.slice(-windowWidth).map((point) => point.z),
+              data: data.dataPoints.slice(-plotSettings.windowWidth).map((point) => point.z),
               borderColor: 'rgb(75, 192, 192)',
               backgroundColor: 'rgba(75, 192, 192, 0.5)',
-              tension: 0,
+              tension: lineTension,
             },
           ],
         };
@@ -106,25 +92,42 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
     const intervalId = setInterval(updateChart, updateInterval);
 
     return () => clearInterval(intervalId);
-  }, [channel, windowWidth, allData, updateInterval]);
+  }, [channel, plotSettings.windowWidth, allData, updateInterval]);
 
   const options: ChartOptions<'line'> = {
     responsive: true,
     maintainAspectRatio: false,
     scales: {
       y: {
-        beginAtZero: true,
-        min: autoRange ? undefined : yMin,
-        max: autoRange ? undefined : yMax,
+        beginAtZero: false,
+        min: plotSettings.autoRange ? undefined : plotSettings.yMin,
+        max: plotSettings.autoRange ? undefined : plotSettings.yMax,
       },
+    },
+    plugins:{
+      title:{
+        display: true,
+        text: title,
+      }
     },
     animation: {
       duration: 0,  // Set animation duration in milliseconds
     },
   };
-
+  useEffect(() => {
+    const chart = chartRef.current;
+    if (chart) {
+      const resizeObserver = new ResizeObserver(() => {
+        chart.resize();
+      });
+      resizeObserver.observe(chart.canvas);
+      return () => {
+        resizeObserver.disconnect();
+      };
+    }
+  }, [chartRef]);
   return (
-    <div style={{ height: '300px', marginBottom: '20px' }}>
+    <div className="chart-div" style={{ height: `${100 / enabledSensorsCount}%` }}>
       <Line ref={chartRef} data={chartData} options={options} />
     </div>
   );

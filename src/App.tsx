@@ -21,7 +21,7 @@ const AppContent: React.FC = () => {
 function App() {
   return (
     <ReduxProvider store={store}>
-        <AppContent/>
+      <AppContent/>
     </ReduxProvider>
   )
 }

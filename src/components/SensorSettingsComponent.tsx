@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect }from 'react';
 import { Switch, Select, SelectItem } from "@nextui-org/react";
 import { useAppSelector, useAppDispatch } from '../redux/hooks';
 import { useSensorSerial } from '../hooks/useSensorSerial';
@@ -20,9 +20,10 @@ const SensorSettings: React.FC<SensorSettingsProps> = ({ accelNumber }) => {
     state.sensor ? state.sensor[accelNumber] : undefined
   );
 
-  const isEnabled = sensorState?.isEnabled ?? false;
-  const accelerationRange = sensorState?.accelerationRange ?? '';
-  const sampleRate = sensorState?.sampleRate ?? '';
+  useEffect(() => {
+    // This effect will run whenever sensorState changes
+    // You can add any necessary logic here
+  }, [sensorState]);
 
   // Use the custom hook for accel state change
   useSensorSerial(accelNumber);
@@ -53,6 +54,12 @@ const SensorSettings: React.FC<SensorSettingsProps> = ({ accelNumber }) => {
     return <div>Loading...</div>;
   }
 
+  const { isEnabled, accelerationRange, sampleRate } = sensorState;
+
+  const handleToggle = () => {
+    dispatch(toggleSensor(accelNumber));
+  };
+
   const handleAccelerationRangeChange = (value: string) => {
     dispatch(setAccelerationRange({ accelNumber, range: value }));
   };
@@ -73,8 +80,8 @@ const SensorSettings: React.FC<SensorSettingsProps> = ({ accelNumber }) => {
       <h3 className="text-lg font-semibold mb-2">Sensor {accelNumber} (Accel {accelNumber + 1})</h3>
       <div className="mb-4 flex items-center">
         <Switch 
-          checked={isEnabled}
-          onChange={() => dispatch(toggleSensor(accelNumber))}
+          isSelected={isEnabled}
+          onChange={() => dispatch(handleToggle)}
         />
         <span className="ml-2">
           {isEnabled ? 'Enabled' : 'Disabled'}
