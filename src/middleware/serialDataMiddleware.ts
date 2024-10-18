@@ -1,7 +1,7 @@
 import { Middleware } from '@reduxjs/toolkit';
 import { parseSerialData, Message, ChannelData, convertToCSV } from '../utils/dataParser';
 import { setStatusMessage } from '../features/systemStatusSlice';
-import { receiveData } from '../features/serialSlice';
+import { receiveData } from '../features/dataSlice';
 import { FileStreamService } from '../services/FileStreamService';
 import { RootState } from '../redux/rootReducer';
 

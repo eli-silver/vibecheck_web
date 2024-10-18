@@ -6,6 +6,7 @@ import { serialOutputReducer, SerialOutputState } from '../features/serialOutput
 import sensorReducer, {SensorStateMap} from '../features/sensorSlice';
 import fileReducer, {FileState} from '../features/fileSlice'
 import plotReducer from '../features/plotSlice'
+import dataReducer, { DataState } from '../features/dataSlice'
 
 
 
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   sensor: sensorReducer,
   file: fileReducer,
   plot: plotReducer,
+  data: dataReducer,
   // ... other reducers
 });
 
@@ -25,6 +27,7 @@ export interface RootState {
   serialOutput: SerialOutputState;
   sensor: SensorStateMap;
   file: FileState;
+  data: DataState;
 }
 
 export default rootReducer;

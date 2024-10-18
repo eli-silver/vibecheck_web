@@ -5,22 +5,17 @@ import { ChannelData } from '../utils/dataParser';
 import { SerialService } from '../services/SerialService';
 import { setStatusMessage, appendStatusMessage } from './systemStatusSlice';
 import { DataProcessingService } from '../services/DataProcessingService';
-import { AppThunk } from '../redux/store';
 
 export interface SerialState {
   isConnected: boolean;
   error: string | null;
   isBrowserCompatible: boolean;
-  data: ChannelData[];
-  dataRetentionLimit: number;
 }
 
 const initialState: SerialState = {
   isConnected: false,
   error: null,
   isBrowserCompatible: false,
-  data: [],
-  dataRetentionLimit: 1000,
 };
 
 export const checkBrowserCompatibility = createAsyncThunk(
@@ -78,17 +73,6 @@ export const disconnectSerial = createAsyncThunk(
   }
 );
 
-export const periodicDataCleanup = (): AppThunk => (dispatch, getState) => {
-  const cleanupInterval = setInterval(() => {
-    dispatch(cleanupOldData());
-  }, 60000); // Run every minute, adjust as needed
-
-  // Return a function to clear the interval when needed
-  return () => clearInterval(cleanupInterval);
-};
-
-
-const dataProcessingService = DataProcessingService.getInstance();
 
 const serialSlice = createSlice({
   name: 'serial',
@@ -107,31 +91,6 @@ const serialSlice = createSlice({
     },
     setBrowserCompatibility: (state, action: PayloadAction<boolean>) => {
       state.isBrowserCompatible = action.payload;
-    },
-    receiveData: (state, action: PayloadAction<ChannelData[]>) => {
-      action.payload.forEach(newChannelData => {
-        const existingChannelIndex = state.data.findIndex(channel => channel.channel === newChannelData.channel);
-        if (existingChannelIndex !== -1) {
-          // Add new data points
-          state.data[existingChannelIndex].dataPoints.push(...newChannelData.dataPoints);
-          // Trim excess data points
-          if (state.data[existingChannelIndex].dataPoints.length > state.dataRetentionLimit) {
-            state.data[existingChannelIndex].dataPoints = state.data[existingChannelIndex].dataPoints.slice(-state.dataRetentionLimit);
-          }
-        } else {
-          state.data.push(newChannelData);
-        }
-      });
-    },
-    setDataRetentionLimit: (state, action: PayloadAction<number>) => {
-      state.dataRetentionLimit = action.payload;
-    },
-    cleanupOldData: (state) => {
-      state.data.forEach(channel => {
-        if (channel.dataPoints.length > state.dataRetentionLimit) {
-          channel.dataPoints = channel.dataPoints.slice(-state.dataRetentionLimit);
-        }
-      });
     },
 
   },
@@ -163,9 +122,6 @@ export const {
   setDisconnected, 
   setError, 
   setBrowserCompatibility, 
-  receiveData,
-  setDataRetentionLimit,
-  cleanupOldData,
 } = serialSlice.actions;
 
 export default serialSlice.reducer;

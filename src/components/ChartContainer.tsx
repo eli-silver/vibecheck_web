@@ -18,8 +18,14 @@ const ChartContainer: React.FC = () => {
       {enabledSensors.map((channel) => (
         <ChartComponent 
           key={channel} 
-          channel={channel} 
+          channel={channel*2} 
           title={`Sensor ${channel}`} 
+          autoRange = {true} 
+          windowWidth = {100}
+          yMin = {-4}
+          yMax = {4}
+          useTrigger = {false}
+          updateInterval={10}
         />
       ))}
     </div>
