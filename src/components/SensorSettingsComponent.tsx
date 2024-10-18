@@ -70,7 +70,7 @@ const SensorSettings: React.FC<SensorSettingsProps> = ({ accelNumber }) => {
 
   return (
     <div className="p-4 bg-gray-800 text-gray-300">
-      <h3 className="text-lg font-semibold mb-2">Accelerometer {accelNumber + 1}</h3>
+      <h3 className="text-lg font-semibold mb-2">Sensor {accelNumber} (Accel {accelNumber + 1})</h3>
       <div className="mb-4 flex items-center">
         <Switch 
           checked={isEnabled}

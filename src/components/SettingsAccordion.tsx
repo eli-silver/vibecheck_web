@@ -1,6 +1,6 @@
 import React from 'react';
 import { Accordion, AccordionItem } from "@nextui-org/react";
-import SensorSettings from './SensorSettings';
+import SensorSettings from './SensorSettingsComponent';
 import SerialInput from './SerialInput';
 
 const SettingsAccordion: React.FC = () => {
@@ -9,17 +9,17 @@ const SettingsAccordion: React.FC = () => {
       <Accordion 
         selectionMode="multiple"
         >
-        <AccordionItem key="accel1" aria-label="Accel 1" 
-        title={ <h3 className='text-white'>Accel 1</h3>} 
+        <AccordionItem key="sensor0" aria-label="Sensor 0" 
+        title={ <h3 className='text-white'>Sensor 0</h3>} 
         >
           <SensorSettings accelNumber={0} />
         </AccordionItem>
-        <AccordionItem key="accel2" aria-label="Accel 2" 
-          title={<h3 className='text-white'>Accel 2</h3>}>
+        <AccordionItem key="sensor1" aria-label="Sensor 1" 
+          title={<h3 className='text-white'>Sensor 1</h3>}>
           <SensorSettings accelNumber={1} />
         </AccordionItem>
-        <AccordionItem key="accel3" aria-label="Accel 3" 
-          title={<h3 className='text-white'>Accel 3</h3>}>
+        <AccordionItem key="sensor2" aria-label="Sensor 2" 
+          title={<h3 className='text-white'>Sensor 2</h3>}>
           <SensorSettings accelNumber={2} />
         </AccordionItem>
         <AccordionItem key="wavegen" aria-label="Wavegen" title={<h3 className='text-white'>Wavegen</h3>}>

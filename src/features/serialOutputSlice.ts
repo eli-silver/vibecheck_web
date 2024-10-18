@@ -1,4 +1,5 @@
 // src/features/serialOutputSlice.ts
+
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { SerialService } from '../services/SerialService';
 

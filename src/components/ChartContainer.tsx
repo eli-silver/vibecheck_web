@@ -19,7 +19,7 @@ const ChartContainer: React.FC = () => {
         <ChartComponent 
           key={channel} 
           channel={channel} 
-          title={`Accelerometer ${channel + 1}`} 
+          title={`Sensor ${channel}`} 
         />
       ))}
     </div>
