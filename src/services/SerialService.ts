@@ -43,6 +43,8 @@ export class SerialService {
             this.dispatchAction(setConnected());
             console.log('Connected to serial port');
             this.readData(); // Start reading data after successful connection
+            this.sendData('Connect');
+
         } catch (error) {
             console.error('Error connecting to serial port:', error);
             this.dispatchAction(setError((error as Error).message));
@@ -55,6 +57,7 @@ export class SerialService {
         
         if (this.reader) {
             try {
+              this.sendData('Disconnect');
                 await this.reader.cancel();
             } catch (error) {
                 console.error('Error cancelling reader:', error);
